@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Agentic Release Life Cycle</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-icon">◈</div>
+        <div>
+          <div class="brand-title">Agentic Release</div>
+          <div class="brand-sub">Life Cycle</div>
+        </div>
+      </div>
+      <nav class="nav">
+        <button class="nav-item active" data-view="dashboard">
+          <span class="nav-icon">▣</span> Dashboard
+        </button>
+        <button class="nav-item" data-view="evaluate">
+          <span class="nav-icon">⚡</span> Evaluate Release
+        </button>
+        <button class="nav-item" data-view="pipeline">
+          <span class="nav-icon">⇢</span> Pipeline
+        </button>
+        <button class="nav-item" data-view="history">
+          <span class="nav-icon">☰</span> History
+        </button>
+        <button class="nav-item" data-view="thresholds">
+          <span class="nav-icon">⌀</span> Thresholds
+        </button>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="status-pill" id="geminiStatus">
+          <span class="dot"></span>
+          <span id="geminiLabel">Checking…</span>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <h1 id="viewTitle">Dashboard</h1>
+        <div class="topbar-actions">
+          <span class="clock" id="clock"></span>
+        </div>
+      </header>
+
+      <section class="view active" id="view-dashboard">
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="stat-label">Evaluations</div>
+            <div class="stat-value" id="statTotal">0</div>
+          </div>
+          <div class="stat-card go">
+            <div class="stat-label">GO</div>
+            <div class="stat-value" id="statGo">0</div>
+          </div>
+          <div class="stat-card nogo">
+            <div class="stat-label">NO-GO</div>
+            <div class="stat-value" id="statNogo">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Deployments</div>
+            <div class="stat-value" id="statDeploy">0</div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-header"><h2>Environment Pipeline</h2></div>
+            <div class="pipeline-visual" id="pipelineVisual">
+              <div class="pipe-stage" data-env="alpha">
+                <div class="pipe-dot"></div>
+                <div class="pipe-name">Alpha</div>
+                <div class="pipe-desc">Internal</div>
+              </div>
+              <div class="pipe-line"></div>
+              <div class="pipe-stage" data-env="beta">
+                <div class="pipe-dot"></div>
+                <div class="pipe-name">Beta</div>
+                <div class="pipe-desc">Early adopters</div>
+              </div>
+              <div class="pipe-line"></div>
+              <div class="pipe-stage" data-env="gamma">
+                <div class="pipe-dot"></div>
+                <div class="pipe-name">Gamma</div>
+                <div class="pipe-desc">Pre-prod</div>
+              </div>
+              <div class="pipe-line"></div>
+              <div class="pipe-stage" data-env="prod">
+                <div class="pipe-dot"></div>
+                <div class="pipe-name">Prod</div>
+                <div class="pipe-desc">Live traffic</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header"><h2>Quick Evaluate</h2></div>
+            <div class="quick-demos">
+              <button class="demo-btn healthy" data-sample="demo-healthy">
+                <span class="demo-badge go-badge">Healthy</span>
+                <span class="demo-title">payments-api 2.4.1 → Prod</span>
+                <span class="demo-hint">Expect GO · low risk</span>
+              </button>
+              <button class="demo-btn risky" data-sample="demo-risky">
+                <span class="demo-badge nogo-badge">Risky</span>
+                <span class="demo-title">auth-gateway 2.5.0-rc1 → Prod</span>
+                <span class="demo-hint">Expect NO-GO · vulns + failures</span>
+              </button>
+              <button class="demo-btn borderline" data-sample="demo-borderline">
+                <span class="demo-badge mid-badge">Borderline</span>
+                <span class="demo-title">catalog-service 1.9.2 → Gamma</span>
+                <span class="demo-hint">Mixed signals</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h2>Recent Decisions</h2>
+            <button class="link-btn" data-view="history">View all →</button>
+          </div>
+          <div id="recentList" class="recent-list empty-state">
+            No evaluations yet. Run a quick demo above.
+          </div>
+        </div>
+      </section>
+
+      <section class="view" id="view-evaluate">
+        <div class="grid-2 eval-layout">
+          <div class="card">
+            <div class="card-header"><h2>Release Candidate</h2></div>
+            <form id="evalForm" class="form">
+              <div class="form-row">
+                <label>Sample package</label>
+                <select id="sampleSelect">
+                  <option value="">— Custom / paste JSON —</option>
+                  <option value="demo-healthy">demo-healthy (prod, clean)</option>
+                  <option value="demo-risky">demo-risky (prod, critical issues)</option>
+                  <option value="demo-borderline">demo-borderline (gamma, mixed)</option>
+                </select>
+              </div>
+              <div class="form-row">
+                <label>Target environment</label>
+                <div class="env-pills" id="envPills">
+                  <button type="button" class="env-pill" data-env="alpha">Alpha</button>
+                  <button type="button" class="env-pill" data-env="beta">Beta</button>
+                  <button type="button" class="env-pill" data-env="gamma">Gamma</button>
+                  <button type="button" class="env-pill active" data-env="prod">Prod</button>
+                </div>
+              </div>
+              <div class="form-row">
+                <label>Release JSON <span class="muted">(editable after loading sample)</span></label>
+                <textarea id="releaseJson" rows="16" spellcheck="false" placeholder='{ "releaseId": "...", "version": "...", ... }'></textarea>
+              </div>
+              <button type="submit" class="btn primary" id="runBtn">
+                <span class="btn-label">Run Agent Evaluation</span>
+                <span class="btn-spinner hidden"></span>
+              </button>
+            </form>
+          </div>
+
+          <div class="card result-panel" id="resultPanel">
+            <div class="result-placeholder" id="resultPlaceholder">
+              <div class="placeholder-icon">◎</div>
+              <p>Select a sample or paste release JSON, then run the agent.</p>
+              <p class="muted">Gemini will call tools, classify GO / NO-GO, and choose a deployment strategy.</p>
+            </div>
+            <div class="result-content hidden" id="resultContent"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" id="view-pipeline">
+        <div class="card">
+          <div class="card-header"><h2>Promotion Chain & Strategies</h2></div>
+          <div class="pipeline-detail">
+            <div class="env-detail-grid" id="envDetailGrid"></div>
+          </div>
+        </div>
+        <div class="card" style="margin-top: 1.25rem">
+          <div class="card-header"><h2>Deployment Strategies</h2></div>
+          <div class="strategy-grid" id="strategyGrid"></div>
+        </div>
+      </section>
+
+      <section class="view" id="view-history">
+        <div class="card">
+          <div class="card-header">
+            <h2>Evaluation History</h2>
+            <button class="btn ghost" id="refreshHistory">Refresh</button>
+          </div>
+          <div id="historyTable" class="history-table empty-state">No history yet.</div>
+        </div>
+      </section>
+
+      <section class="view" id="view-thresholds">
+        <div class="card">
+          <div class="card-header">
+            <h2>Environment Gates</h2>
+            <span class="muted">Stricter toward Prod — agent uses these as guidance</span>
+          </div>
+          <div class="table-wrap">
+            <table class="data-table" id="thresholdTable">
+              <thead>
+                <tr>
+                  <th>Metric</th>
+                  <th>Alpha</th>
+                  <th>Beta</th>
+                  <th>Gamma</th>
+                  <th>Prod</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="modal-backdrop hidden" id="modal">
+    <div class="modal">
+      <button class="modal-close" id="modalClose">×</button>
+      <div id="modalBody"></div>
+    </div>
+  </div>
+
+  <div class="toast hidden" id="toast"></div>
+
+  <script src="/js/app.js"></script>
+</body>
+</html>
