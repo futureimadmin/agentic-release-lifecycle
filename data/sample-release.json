@@ -1,0 +1,63 @@
+{
+  "releaseId": "rel-custom-001",
+  "version": "3.0.0",
+  "commitSha": "deadbeefcafebabe01234567",
+  "serviceName": "inventory-api",
+  "targetEnvironment": "beta",
+  "currentEnvironment": "alpha",
+  "tests": {
+    "total": 400,
+    "passed": 392,
+    "failed": 8,
+    "skipped": 0,
+    "coverage": 0.79,
+    "flakyCount": 1,
+    "suites": { "unit": 0.98, "integration": 0.94, "e2e": 0.9 }
+  },
+  "vulnerabilities": {
+    "critical": 0,
+    "high": 1,
+    "medium": 6,
+    "low": 15,
+    "info": 20,
+    "scanner": "trivy",
+    "lastScanAt": "2026-10-10T12:00:00Z",
+    "topIssues": [
+      { "id": "CVE-2024-1111", "severity": "high", "package": "webpack", "fixedIn": "5.95.0" }
+    ]
+  },
+  "owasp": {
+    "score": 88,
+    "asvsLevel": 2,
+    "failedControls": [],
+    "checkedControls": 42,
+    "notes": "Good baseline for beta."
+  },
+  "codeQuality": {
+    "criticalBugs": 0,
+    "majorBugs": 3,
+    "codeSmells": 35,
+    "maintainabilityIndex": 72,
+    "technicalDebtHours": 8,
+    "duplicatedLinesPct": 1.8
+  },
+  "performance": {
+    "p50LatencyMs": 30,
+    "p95LatencyMs": 95,
+    "p99LatencyMs": 180,
+    "throughputRps": 300,
+    "errorRate": 0.001,
+    "loadTestPassed": true
+  },
+  "changeRisk": {
+    "score": 22,
+    "linesChanged": 150,
+    "filesChanged": 8,
+    "authors": 2,
+    "touchesAuth": false,
+    "touchesPayments": false,
+    "touchesInfra": false,
+    "blastRadius": "low",
+    "riskFactors": []
+  }
+}
